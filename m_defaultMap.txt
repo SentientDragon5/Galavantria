@@ -4,9 +4,9 @@ w w a a a a a a a a a a a a a a a a a a s s s a a a a a w w
 w w a a a a a a a a a a a a a a a a a s s s s s a a a a w w 
 w w a a s s s s s s s s s s s s s s s s g s s s s s a a w w 
 w a a s s s s s g g g g g g g g g s s g g g g s s s a a w w 
-w a a s s g g e e e e e g g g g g g g g g g g g s s a a w w 
+w a a s s r r e e e e e m g m g m g g n n g g g s s a a w w 
 w a a s s s e e e e e q q q q q q q q q g g g g s s a a w w 
-w a a s s s s e e e e e g g g g g g g q q g g g s s a a w w 
+w a a s s s s e e e e e g g g g g g g q q g o o s s a a w w 
 w w a s s s s d d d e d d d d d d g g g q q q g s s a a w w 
 w w w a s s s d f f f f f f f f f d d g g g q g s s a a w w 
 w w w w a a a f w w w w w w w f f f f d g g q g s s a a w w 

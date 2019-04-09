@@ -1,0 +1,8 @@
+breastplate 
+gold_sword 
+iron_sword 
+ore 
+ore 
+cheese 
+cheese 
+empty
