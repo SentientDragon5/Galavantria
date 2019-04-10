@@ -1,4 +1,4 @@
-240 
+200 
 480 
 leatherBag 
 sværd 

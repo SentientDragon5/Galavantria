@@ -2,6 +2,9 @@
 Galavantria
 created by SentientDragon5
 started March 2019
+Art credit to
+ - scratch.com users gamerkeep & ninja545
+ - FangTrooper56
 '''
 import pyglet; import keyboard; import time
 clock = 0
@@ -9,11 +12,12 @@ clock = 0
 winW = 600; winH = 600
 window = pyglet.window.Window(winW + 300,winH)
 window.set_caption('Gallivantria')
-window.set_icon(pyglet.image.load('n_16x16n.png'), pyglet.image.load('n_32x32n.png'))
+window.set_icon(pyglet.image.load('n_16x16.png'), pyglet.image.load('n_32x32.png'))
 invisible = pyglet.image.load('invisible.png')
 #tile init
-globalWorld = 'house'
-globalWorld = 'defaultMap'
+houseA = 'house'
+defaultMap = 'defaultMap'
+globalWorld = defaultMap
 tileW = 20 ; tileH =20
 tile = {}
 tile['w'] = pyglet.image.load('t_water.png')
@@ -48,6 +52,14 @@ objectkey['c'] = pyglet.image.load('o_chest.png')
 objectkey['bd'] = pyglet.image.load('o_bed.png')
 objectkey['t'] = pyglet.image.load('o_table.png')
 objectkey['sb'] = pyglet.image.load('o_smallAdobe.png')
+objectkey['bo'] = pyglet.image.load('o_boat.png')
+objectkey['bs'] = pyglet.image.load('o_bookshelf.png')
+objectkey['ch'] = pyglet.image.load('o_chair.png')
+objectkey['br'] = pyglet.image.load('o_barrel.png')
+objectkey['gt'] = pyglet.image.load('o_giantTree.png')
+objectkey['s'] = pyglet.image.load('o_woodShade.png')
+objectkey['v'] = pyglet.image.load('o_Vase.png')
+objectkey['vf'] = pyglet.image.load('o_vaseFlowers.png')
 objRen = pyglet.sprite.Sprite(objectkey['b'], x=40, y=40)
 objRen.update(None,None,None,None,float(0.4),float(0.4))
 #inventory init
@@ -58,7 +70,7 @@ sideRen = pyglet.sprite.Sprite(inventoryBG, x=200, y=600)
 itemRen = pyglet.sprite.Sprite(itemBorder, x=60, y=60)
 itemRen.update(None,None,None,None,float(1/2),float(1/2))
 itemImage = {}
-for itemTexture in ['leatherBag','sword','ring','helm','breastplate','boots','cheese','ore','sværd','magic_blade','iron_sword','gold_sword']:
+for itemTexture in ['leatherBag','sword','ring','eyeOfTheSea','helm','breastplate','boots','cheese','ore','sværd','magic_blade','iron_sword','gold_sword']:
     itemImage[itemTexture] = pyglet.image.load(''.join(['i_',itemTexture,'.png']))
 #action window init
 door = pyglet.image.load('w_door.png')
@@ -105,7 +117,6 @@ with open('s_chest.txt', 'r') as file:
                 continue
             else:
                 chests[chest_save_key[Count]] = char
-                print(Count,char)
                 Count += 1
 #read & render island data
 colorIndex = {}
@@ -166,21 +177,48 @@ def renObjects(world,height):
         a = item.split('(')
         b = a[1].split(')')
         c = b[0].split(',')
-        objRen.set_position(int(c[0]),int(c[1]))
+        if texture == 's':
+            objRen.image = objectkey[texture]
+            objRen.set_position(int(c[0]),int(c[1]) + 20)
+        else:
+            objRen.set_position(int(c[0]),int(c[1]))
         if texture == 'f':
             if fireCount >= 3:
                 fireCount = 0
             objRen.image = objectkey[''.join(['f',str(fireCount)])]
+        elif texture == 's':
+            pass
         elif texture == 'sb':
             objRen.image = objectkey[texture]
             for sby in [0,20]:
                 for sbx in [0,20,40,60,80]:
                     collisions[(int(c[0]) + sbx,int(c[1]) + sby)] = True
             acessLoc['house'] = (int(c[0]) + 40,int(c[1]) - 20)
+        elif texture == 'bo':
+            objRen.image = objectkey[texture]
+            for sby in [0,20]:
+                for sbx in [0,20,40]:
+                    collisions[(int(c[0]) + sbx,int(c[1]) + sby)] = True
+            acessLoc['boat'] = (int(c[0]),int(c[1]) + 20)
         elif texture == 'bd':
             objRen.image = objectkey[texture]
             for bdy in [0,20]:
                 for bdx in [0,20]:
+                    collisions[(int(c[0]) + bdx,int(c[1]) + bdy)] = True
+        elif texture == 'lt':
+            objRen.image = objectkey[texture]
+            for bdy in [0,20]:
+                for bdx in [0,20]:
+                    collisions[(int(c[0]) + bdx,int(c[1]) + bdy)] = True
+        elif texture == 'gt':
+            objRen.image = objectkey[texture]
+            for bdy in [20,40]:
+                for bdx in [40,60]:
+                    collisions[(int(c[0]) + bdx,int(c[1]) + bdy)] = True
+        elif texture == 'bs':
+            objRen.image = objectkey[texture]
+            for bdy in [0]:
+                for bdx in [0,20,40,60,80,100]:
                     collisions[(int(c[0]) + bdx,int(c[1]) + bdy)] = True
         elif texture == 'c':
             objRen.image = objectkey[texture]
@@ -256,9 +294,9 @@ def drawInventory(playerImage):
             itemRen.draw()
     action.image = invisible
     action.update(None,None,None,None,float(2),float(2))
-    if globalWorld == 'defaultMap':
+    if globalWorld == defaultMap:
         if (gx, gy) == acessLoc['house']:
-            ptext('press E to enter the house',670,20)
+            ptext('press E to enter the house',670,20,10)
             action.image = door
             action.set_position(700,50)
         if (gx, gy) == acessLoc['chest']:
@@ -282,28 +320,33 @@ def drawInventory(playerImage):
                     itemRen.update(None,None,None,None,float(0.75),float(0.75))
                     itemRen.draw()
             action.update(None,None,None,None,float(1.5),float(1.5))
-            ptext('click to switch',630,70)
-            ptext('the boxes',635,50)
+            ptext('click to switch\nthe boxes',630,70,10)
             action.image = objectkey['c']
-            action.set_position(630,120)  
+            action.set_position(630,120)
+def inventoryEdit():
+    pass
 def executeAction(actionType):
-    global gx, gy, globalWorld, exitTox, exitToy
+    global gx, gy, globalWorld, exitTox, exitToy, playerSkin, lastd
     tempx = gx
     tempy = gy
     if actionType == 'h':
-        if globalWorld == 'house':
-            globalWorld = 'defaultMap'
+        if globalWorld == houseA:
+            globalWorld = defaultMap
             edgeCollisions()
             fireCount = 0
             gx = exitTox
             gy = exitToy
+            animateStep(False,'d',playerSkin) ; lastd = 'd'
         if (tempx,tempy) == acessLoc['house']:
             print('enter/exit house')
-            if globalWorld == 'defaultMap':
-                globalWorld = 'house'
+            if globalWorld == defaultMap:
+                globalWorld = houseA
                 edgeCollisions()
                 exitTox = gx ; exitToy = gy
-                gx = 260 ; gy = 100
+                gx = 300 ; gy = 120#enter house location
+                animateStep(False,'u',playerSkin) ; lastd = 'u'
+    #if actionType == 'b':
+        
 #player
 exitTox = gx ; exitToy = gy
 def animateStep(bAnimate,direction,image):
@@ -318,7 +361,7 @@ def animateStep(bAnimate,direction,image):
     player.image = playerImage[''.join([image,direction,str(playerticking)])]
 pressedLast = True
 def runPlayer(image):
-    global gx, gy, globalWorld, pressedLast, skins, skinNum, playerSkin
+    global gx, gy, globalWorld, pressedLast, skins, skinNum, playerSkin, exitTox, exitToy, gmessage
     reversex = 0 ; reversey = 0
     keypress = False ; drawChest = False
     if keyboard.is_pressed('w'):#move up
@@ -344,6 +387,7 @@ def runPlayer(image):
     elif keyboard.is_pressed('e'):#enter house
         pressedLast = False
         executeAction('h')
+        executeAction('b')
     elif keyboard.is_pressed('q'):#change player
         pressedLast = False
         skinNum += 1
@@ -367,14 +411,26 @@ def runPlayer(image):
         Savefile = open(''.join(['s_save_',playerSkin,'.txt']),'w')
         writeList = []
         for info in save_key:
-            writeList.append(str(playerData[info]))
+            if globalWorld == houseA:
+                if info == 'x':
+                    writeList.append(str(exitTox))
+                elif info == 'y':
+                    writeList.append(str(exitToy))
+                else:
+                    writeList.append(str(playerData[info]))
+            else:
+                writeList.append(str(playerData[info]))
             writeList.append(' \n')
         del writeList[-1]
         Savefile.write(str(''.join(writeList))) 
         Savefile.close()
-def ptext(text,x,y):
-    text = pyglet.text.Label(text, font_name='Arial', font_size=10,x=x, y=y)
-    text.draw()    
+def ptext(info,x,y,size):
+    lines = info.split('\n')
+    yOffset = 0
+    for line in lines:
+        text = pyglet.text.Label(line, font_name='Arial', font_size=10,x=x, y=(y + yOffset))
+        text.draw()
+        yOffset -= size * 1.5
 #rerender
 def update(dt):
     global clock,gx,gy,playerSkin,globalWorld, textx, texty, textinfo

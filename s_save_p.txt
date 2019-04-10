@@ -1,5 +1,5 @@
-560 
-200 
+300 
+60 
 leatherBag 
 sværd 
 ring 
