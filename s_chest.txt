@@ -1,6 +1,6 @@
 breastplate 
-gold_sword 
-iron_sword 
+empty 
+empty 
 ore 
 ore 
 cheese 
